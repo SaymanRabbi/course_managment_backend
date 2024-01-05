@@ -50,7 +50,7 @@ exports.userLoginController = async (req,res)=>{
         if(!user){
             return res.status(500).send({
                 status:false,
-                message:"Something went wrong"
+                message:"Password Not get"
             })
         }
         //  ------not get user 
