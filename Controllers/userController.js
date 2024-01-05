@@ -1,4 +1,6 @@
-const { userCreateServices } = require("../Services/userServices");
+const { createToken } = require("../Middlewares/CreateToken");
+const { userCreateServices, userLoginServices } = require("../Services/userServices");
+const bcrypt = require('bcrypt');
 
 exports.userCreateController = async (req, res, next) => {
     try {
@@ -32,3 +34,53 @@ exports.userCreateController = async (req, res, next) => {
         })
     }
 }
+
+// ------login user-----
+exports.userLoginController = async (req,res)=>{
+    try {
+         const {email,password} = req.body
+         if(!email || !password){
+            return res.status(400).send({
+                status:false,
+                message:"Please provide all the fields"
+            })
+         }
+         const user = await userLoginServices(email)
+        //  ------not get user 
+        if(!user){
+            return res.status(500).send({
+                status:false,
+                message:"Something went wrong"
+            })
+        }
+        //  ------not get user 
+         const comparepassword =  await bcrypt.compare(password,user.password)
+        //  ------ComparePassword
+        if(!comparepassword){
+            return res.status(400).send({
+                status:false,
+                message:"Password not match"
+            })
+            //  ------ComparePassword
+         }
+         const token = createToken(user)
+         if(!token){
+            return res.status(400).json({
+                success: false,
+                message: "Invalid credentials"
+            })
+         }
+         user.token = token;
+         user.save()
+        res.status(200).json({
+            success: true,
+            user
+        })
+    } catch (error) {
+        res.status(500).send({
+            status:false,
+            message:error.message
+        })
+    }
+}
+// ------login user-----
