@@ -20,7 +20,17 @@ const Course = new mongoose.Schema({
     purchessUserId:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User'
-    }]
+    }],
+    modules:[{
+        title:{type:String},
+        lessons:[{
+            title:{type:String},
+            video:{type:String},
+            content:{type:String}
+        }]
+    }],
 },{
     timestamps:true
 });
+
+module.exports = mongoose.model('Course',Course);
