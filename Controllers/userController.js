@@ -95,7 +95,7 @@ exports.userLoginController = async (req, res) => {
              message: "Token creation failed. Invalid credentials.",
           });
        }
- 
+      user.token = token;
        // Check the number of active devices
        if (user.activeDevice.length >= 2) {
           return res.status(403).json({ message: 'User already logged in on two devices' });

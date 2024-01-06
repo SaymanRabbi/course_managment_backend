@@ -7,6 +7,7 @@ const { ErrorHandaler } = require('./Middlewares/ErrorHandaler');
 const dotenv = require('dotenv').config();
 const port = process.env.PORT || 5000;
 const userRoute = require('./Routes/UserRoute');
+const courseRoute = require('./Routes/CourseRoute');
 // ------------------ Connect to Database ------------------//
 DBConnection();
 // ------------------ Connect to Database ------------------//
@@ -18,6 +19,7 @@ app.use(express.json());
 
 // ------------------ Routes ------------------//
  app.use('/api/v1/user', userRoute);
+ app.use('/api/v1/course', courseRoute);
 // ------------------ Lisiting route ------------------//
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`.yellow.bold);

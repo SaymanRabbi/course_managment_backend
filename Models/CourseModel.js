@@ -26,7 +26,12 @@ const Course = new mongoose.Schema({
         lessons:[{
             title:{type:String},
             video:{type:String},
-            content:{type:String}
+            assignment:{type:String},
+            quiz:[{
+                question:{type:String},
+                options:[{type:String}],
+                answer:{type:String}
+            }]
         }]
     }],
 },{
