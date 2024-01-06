@@ -9,9 +9,16 @@ const User = new mongoose.Schema({
    },
    email:{
        type:String,
-       required:[true,'Please enter your email'],
+       required:true,
        trim:true,
-       unique:true
+       unique:true,
+       validate: {
+        validator: async function(email) {
+          const user = await this.constructor.findOne({ email });
+          return !user;
+        },
+        message: 'Email is already in use. Please choose another email or login',
+      }
    },
    password:{
        type:String,
