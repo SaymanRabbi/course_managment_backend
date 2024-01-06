@@ -74,10 +74,8 @@ exports.userLoginController = async (req, res) => {
              message: "User not found. Please provide a valid email and password.",
           });
        }
- 
        // Compare passwords in constant time
        const comparepassword = await bcrypt.compare(pass, user.password);
- 
        // Handle password mismatch
        if (!comparepassword) {
           return res.status(400).send({
@@ -100,14 +98,11 @@ exports.userLoginController = async (req, res) => {
        if (user.activeDevice.length >= 2) {
           return res.status(403).json({ message: 'User already logged in on two devices' });
        }
- 
        // Update the activeDevices array with the current device identifier
        user.activeDevice = [...user.activeDevice, deviceIdentifier];
        await user.save();
- 
        // Send user data in frontend without password
        const { password, ...rest } = user._doc;
- 
        res.status(200).json({
           success: true,
           data: rest,

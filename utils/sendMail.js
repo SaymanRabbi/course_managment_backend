@@ -77,7 +77,7 @@ const sendMail = async (user) => {
           <div class="signature">
               <p>Best regards,</p>
               <p style=" 
-                font-weight: bold;">Sayman Rabbi</p>
+                font-weight: bold;">Course Managment Team</p>
           </div>
       </div>
   </body>
