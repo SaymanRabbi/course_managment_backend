@@ -12,20 +12,11 @@ const User = new mongoose.Schema({
        required:true,
        trim:true,
        unique:true,
-       validate: {
-        validator: async function(email) {
-          const user = await this.constructor.findOne({ email });
-          return !user;
-        },
-        message: 'Email is already in use. Please choose another email or login',
-      }
    },
    password:{
        type:String,
        required:[true,'Please enter your password'],
        trim:true,
-       minlength:[6,'Your password must be longer than 6 characters'],
-       maxlength:[7,'Your password cannot exceed 7 characters']
    },
    courses:[{
       courseId:{type:mongoose.Schema.Types.ObjectId,ref:'Course'},
@@ -44,7 +35,10 @@ const User = new mongoose.Schema({
         type:String,
         enum:['student','teacher','admin'],
         default:'student'
-    }
+    },
+    activeDevice: [{
+        type: String,
+    }]
 },{
     timestamps:true
 });

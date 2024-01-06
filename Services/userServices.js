@@ -3,8 +3,7 @@ const UserModel = require("../Models/UserModel");
 
 exports.userCreateServices= async (user) => {
     try {
-        const newUser = new UserModel(user);
-        const userCreated = await newUser.save();
+        const userCreated = (await UserModel.create(user)).save();
         return userCreated;
     } catch (error) {
         throw error;
