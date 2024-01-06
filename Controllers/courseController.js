@@ -3,6 +3,7 @@ const { courseCreateService } = require("../Services/courseServices");
 exports.createCourseController = async (req, res) => {
     try {
         const { title,description,modules} = req.body;
+        // -------get id from token
         const { _id } = req.userData;
         if(!title || !description  || !modules){
             return res.status(400).send({
@@ -16,6 +17,7 @@ exports.createCourseController = async (req, res) => {
             teacherID:_id,
             modules
         }
+        // -------create course
         const course = await courseCreateService(data);
         if(!course){
             return res.status(400).send({
