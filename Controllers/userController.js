@@ -1,5 +1,5 @@
 const { createToken } = require("../Middlewares/CreateToken");
-const { userCreateServices, userLoginServices } = require("../Services/userServices");
+const { userCreateServices, userLoginServices, updateUserServices } = require("../Services/userServices");
 const bcrypt = require('bcrypt');
 
 exports.userCreateController = async (req, res, next) => {
@@ -121,3 +121,34 @@ exports.userLoginController = async (req, res) => {
  };
  
 // ------login user-----
+
+// ------update user role-----
+exports.updateUserController = async (req, res) => {
+   try {
+      const { id } = req.params;
+      const { role } = req.body;
+
+      if (!id || !role) {
+         return res.status(400).send({
+            status: false,
+            message: "Please provide all the fields",
+         });
+      }
+      const user = await updateUserServices(id,role);
+      // console.log(user);
+      if (!user) {
+         return res.status(404).send({
+            status: false,
+            message: "User not found",
+         });
+      }
+      res.status(200).send({
+         status: true,
+         message: "User role updated successfully",
+         data: user,
+      });
+   } catch (error) {
+      
+   }
+}
+// ------update user role-----

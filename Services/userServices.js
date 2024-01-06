@@ -22,3 +22,12 @@ exports.userLoginServices = async (email)=>{
     }
 }
 // -----get userLoginServices------
+// -----update user role------
+exports.updateUserServices = async (id,role)=>{
+    try {
+        const updateUser = await UserModel.findByIdAndUpdate(id, { role }, { new: true, useFindAndModify: false });
+        return updateUser
+    } catch (error) {
+        throw error
+    }
+}
