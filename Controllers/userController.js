@@ -38,8 +38,8 @@ exports.userCreateController = async (req, res, next) => {
 // ------login user-----
 exports.userLoginController = async (req,res)=>{
     try {
-         const {email,password} = req.body
-         if(!email || !password){
+         const {email,password:pass} = req.body
+         if(!email || !pass){
             return res.status(400).send({
                 status:false,
                 message:"Please provide all the fields"
@@ -54,7 +54,7 @@ exports.userLoginController = async (req,res)=>{
             })
         }
         //  ------not get user 
-         const comparepassword =  await bcrypt.compare(password,user.password)
+         const comparepassword =  await bcrypt.compare(pass,user.password)
         //  ------ComparePassword
         if(!comparepassword){
             return res.status(400).send({
@@ -72,9 +72,11 @@ exports.userLoginController = async (req,res)=>{
          }
          user.token = token;
          user.save()
+        //  ------send user data in frontend without password
+         const {password,...rest} = user._doc
         res.status(200).json({
             success: true,
-            user
+            data:rest
         })
     } catch (error) {
         res.status(500).send({
