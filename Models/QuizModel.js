@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
-
 const Quiz = new mongoose.Schema({
     title:{
         type:String,
-        required:[true,'Please enter your title'],
+        required:[true,'Please enter your quiz title'],
         trim:true,
         maxlength:[100,'Your title cannot exceed 100 characters']
     },
