@@ -139,7 +139,7 @@ exports.updateUserController = async (req, res) => {
       if (!user) {
          return res.status(404).send({
             status: false,
-            message: "User not found",
+            message: "User not found or role already updated",
          });
       }
       res.status(200).send({
