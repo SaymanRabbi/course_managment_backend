@@ -1,0 +1,48 @@
+{
+    "title": "Introduction to Programming",
+    "description": "Learn the basics of programming.",
+    "teacherID": "", 
+    "purchessUserId": [],
+    "modules": [
+      {
+        "title": "Module 1: Getting Started",
+        "lessons": [
+          {
+            "title": "Lesson 1: Introduction to Programming",
+            "video": "https://res.cloudinary.com/dnr5u3jpb/video/upload/v1704521580/mt33rqkjeqopbcslutbr.mp4",
+            "assignment": "https://example.com/lesson1_assignment",
+            "quiz": [
+              {
+                "question": "What is a variable?",
+                "options": ["A", "B", "C", "D"],
+                "answer": "A"
+              },
+              {
+                "question": "What is a loop?",
+                "options": ["A", "B", "C", "D"],
+                "answer": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 2: Variables and Data Types",
+            "video": "https://res.cloudinary.com/dnr5u3jpb/video/upload/v1704521580/mt33rqkjeqopbcslutbr.mp4",
+            "assignment": "https://example.com/lesson2_assignment",
+            "quiz": [
+              {
+                "question": "What is a string?",
+                "options": ["A", "B", "C", "D"],
+                "answer": "C"
+              },
+              {
+                "question": "What is an integer?",
+                "options": ["A", "B", "C", "D"],
+                "answer": "B"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

@@ -2,6 +2,7 @@ const { userCreateController,userLoginController,updateUserController } = requir
 const { apiLimiter } = require('../Middlewares/ApiLimiter');
 const { authorization } = require('../Middlewares/IsAdmin');
 const VerifyToken = require('../Middlewares/VerifyToken');
+const { VerifyTokenServices } = require('../Services/userServices');
 
 const router = require('express').Router();
 /**
@@ -25,5 +26,12 @@ router.get('/login',apiLimiter,userLoginController)
  * @rule 1- the request must be put request with the id of the user in the params and the body of the request contain the following
  */
 router.put('/update/:id',apiLimiter,VerifyToken,authorization('admin',"teacher"),updateUserController)
+/**
+ * @updateAPI to update user verification 
+ * @steps 1- send the request to the server
+ * @example http://localhost:5000/api/v1/user/verify-email 
+ * @rule 1- the request must be put request with the token of the user in the params
+ */
+router.put('/verify-email/:token',VerifyTokenServices)
 
 module.exports = router;

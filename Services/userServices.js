@@ -1,6 +1,7 @@
 const UserModel = require("../Models/UserModel");
 const sendMail = require("../utils/sendMail");
-
+const jwt = require('jsonwebtoken');
+const {promisify} = require('util');
 
 exports.userCreateServices= async (user) => {
     try {
@@ -40,6 +41,27 @@ exports.updateUserServices = async (id,role)=>{
             return null
         }
         
+    } catch (error) {
+        throw error
+    }
+}
+exports.VerifyTokenServices = async (req,res)=>{
+    try {
+        const {token} = req.params;
+        const user =await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+        const check = await UserModel.findById(user._id);
+        if(check.isVerified ===true ){
+          return   res.status(400).send({
+                status:false,
+                message:"User already verified"
+             });
+        } else{
+            await UserModel.findByIdAndUpdate(user._id,{isVerified:true});
+           return res.status(200).send({
+                status:true,
+                message:"User verified successfully"
+            });
+        }
     } catch (error) {
         throw error
     }

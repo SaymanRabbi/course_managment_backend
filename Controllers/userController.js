@@ -1,6 +1,7 @@
 const { createToken } = require("../Middlewares/CreateToken");
 const { userCreateServices, userLoginServices, updateUserServices } = require("../Services/userServices");
 const bcrypt = require('bcrypt');
+const sendVerificationEmail = require("../utils/sendMail");
 
 exports.userCreateController = async (req, res, next) => {
     try {
@@ -38,6 +39,14 @@ exports.userCreateController = async (req, res, next) => {
              message:"Something went wrong"
          })
      }
+     const token = createToken(user);
+       if(!token){
+             return res.status(500).send({
+                status:false,
+                message:"Token not created"
+             })
+       }
+       await sendVerificationEmail(user, token);
     //  send created user data in frontend
     res.status(200).send({
             status:true,
@@ -85,7 +94,6 @@ exports.userLoginController = async (req, res) => {
        }
  
        const token = createToken(user);
- 
        // Handle token creation failure
        if (!token) {
           return res.status(500).json({
@@ -93,9 +101,13 @@ exports.userLoginController = async (req, res) => {
              message: "Token creation failed. Invalid credentials.",
           });
        }
-      user.token = token;
+       res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production" ? true : false,
+            maxAge: 86400000 // 1 day
+       });
        // Check the number of active devices
-       if (user.activeDevice.length >= 2) {
+       if (user.activeDevice.length >= 3) {
           return res.status(403).json({ message: 'User already logged in on two devices' });
        }
        // Update the activeDevices array with the current device identifier
@@ -105,7 +117,7 @@ exports.userLoginController = async (req, res) => {
        const { password, ...rest } = user._doc;
        res.status(200).json({
           success: true,
-          data: rest,
+          data: rest
        });
     } catch (error) {
        res.status(500).send({

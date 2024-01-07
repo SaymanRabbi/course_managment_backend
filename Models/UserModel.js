@@ -22,9 +22,6 @@ const User = new mongoose.Schema({
       courseId:{type:mongoose.Schema.Types.ObjectId,ref:'Course'},
       progress:{type:Number,default:0},
    }],
-   token:{
-    type:String
-   },
     quizs:[{
         quizId:{type:mongoose.Schema.Types.ObjectId,ref:'Quiz'},
         score:{type:Number,default:0},
@@ -38,7 +35,11 @@ const User = new mongoose.Schema({
     },
     activeDevice: [{
         type: String,
-    }]
+    }],
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
 },{
     timestamps:true
 });
