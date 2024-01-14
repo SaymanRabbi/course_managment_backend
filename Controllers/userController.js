@@ -6,6 +6,9 @@ const {
 } = require("../Services/userServices");
 const bcrypt = require("bcrypt");
 const sendVerificationEmail = require("../utils/sendMail");
+const { generateUniqueCode } = require("../utils/uniqueCode");
+const sendForgotPasswordEmail = require("../utils/sendMail");
+const ChangesPass = require("../Models/ChangesPass");
 
 exports.userCreateController = async (req, res, next) => {
   try {
@@ -120,12 +123,10 @@ exports.userLoginController = async (req, res) => {
     });
     // Check the number of active devices
     if (user.activeDevice.length >= 3) {
-      return res
-        .status(403)
-        .json({
-          message: "User already logged in on two devices",
-          status: false,
-        });
+      return res.status(403).json({
+        message: "User already logged in on two devices",
+        status: false,
+      });
     }
     // Update the activeDevices array with the current device identifier
     user.activeDevice = [...user.activeDevice, deviceIdentifier];
@@ -133,8 +134,9 @@ exports.userLoginController = async (req, res) => {
     // Send user data in frontend without password
     const { password, ...rest } = user._doc;
     res.status(200).json({
-      success: true,
+      status: true,
       data: rest,
+      message: "User logged in successfully",
     });
   } catch (error) {
     res.status(500).send({
@@ -171,6 +173,59 @@ exports.updateUserController = async (req, res) => {
       message: "User role updated successfully",
       data: user,
     });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
 };
 // ------update user role-----
+
+// changes password
+exports.userForgotPasswordController = async (req, res) => {
+  try {
+    const { email } = req.params;
+    if (!email) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide email",
+      });
+    }
+    const user = await userLoginServices(email);
+    if (!user) {
+      return res.status(404).send({
+        status: false,
+        message: "User not found",
+      });
+    }
+    const makeCode = generateUniqueCode();
+    await sendForgotPasswordEmail(user, makeCode);
+    // -----check id exits or not
+    const exits = await ChangesPass.findOne({ userId: user._id });
+    if (exits) {
+      await ChangesPass.findOneAndUpdate(
+        { userId: user._id },
+        { Passcode: makeCode }
+      );
+    }
+    if (!exits) {
+      const makeTempPass = await ChangesPass.create({
+        Passcode: makeCode,
+        userId: user._id,
+      });
+      makeTempPass.save();
+    }
+    res.status(200).send({
+      status: true,
+      message: "Code sent successfully Check your email",
+      code: makeCode,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+// changes password
