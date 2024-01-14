@@ -88,6 +88,7 @@ exports.userLoginController = async (req, res) => {
         message: "User not found. Please provide a valid email and password.",
       });
     }
+
     // Compare passwords in constant time
     const comparepassword = await bcrypt.compare(pass, user.password);
     // Handle password mismatch
@@ -97,12 +98,18 @@ exports.userLoginController = async (req, res) => {
         message: "Password does not match. Please provide a valid password.",
       });
     }
+    if (!user.isVerified) {
+      return res.status(400).send({
+        status: false,
+        message: "Please Verify Your email",
+      });
+    }
 
     const token = createToken(user);
     // Handle token creation failure
     if (!token) {
       return res.status(500).json({
-        success: false,
+        status: false,
         message: "Token creation failed. Invalid credentials.",
       });
     }
@@ -115,7 +122,10 @@ exports.userLoginController = async (req, res) => {
     if (user.activeDevice.length >= 3) {
       return res
         .status(403)
-        .json({ message: "User already logged in on two devices" });
+        .json({
+          message: "User already logged in on two devices",
+          status: false,
+        });
     }
     // Update the activeDevices array with the current device identifier
     user.activeDevice = [...user.activeDevice, deviceIdentifier];

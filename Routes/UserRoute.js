@@ -21,7 +21,7 @@ router.post("/register", apiLimiter, userCreateController);
  * @example http://localhost:5000/api/v1/user/login
  * @rule 1- the request must be get request with the body of the request contain the following
  */
-router.get("/login", apiLimiter, userLoginController);
+router.post("/login", apiLimiter, userLoginController);
 /**
  * @updateAPI to update user role
  * @steps 1- send the request to the server
