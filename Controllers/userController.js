@@ -5,10 +5,13 @@ const {
   updateUserServices,
 } = require("../Services/userServices");
 const bcrypt = require("bcrypt");
-const sendVerificationEmail = require("../utils/sendMail");
 const { generateUniqueCode } = require("../utils/uniqueCode");
-const sendForgotPasswordEmail = require("../utils/sendMail");
 const ChangesPass = require("../Models/ChangesPass");
+const {
+  sendVerificationEmail,
+  sendForgotPasswordEmail,
+} = require("../utils/sendMail");
+const UserModel = require("../Models/UserModel");
 
 exports.userCreateController = async (req, res, next) => {
   try {
@@ -57,7 +60,7 @@ exports.userCreateController = async (req, res, next) => {
     //  send created user data in frontend
     res.status(200).send({
       status: true,
-      message: "User created successfully",
+      message: "User created successfully Please check Email to verify Account",
       data: user,
       token,
     });
@@ -122,7 +125,7 @@ exports.userLoginController = async (req, res) => {
       maxAge: 86400000, // 1 day
     });
     // Check the number of active devices
-    if (user.activeDevice.length >= 3) {
+    if (user.activeDevice.length >= 1000) {
       return res.status(403).json({
         message: "User already logged in on two devices",
         status: false,
@@ -218,7 +221,7 @@ exports.userForgotPasswordController = async (req, res) => {
     }
     res.status(200).send({
       status: true,
-      message: "Code sent successfully Check your email",
+      message: "Code sent successfully",
       code: makeCode,
     });
   } catch (error) {
@@ -229,3 +232,66 @@ exports.userForgotPasswordController = async (req, res) => {
   }
 };
 // changes password
+exports.userChangePasswordController = async (req, res) => {
+  try {
+    const { password, code, _id } = req.body;
+    if (!password || !code || !_id) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+    // -----check id exits or not
+    const exits = await ChangesPass.findOne({ userId: _id });
+    if (!exits) {
+      return res.status(404).send({
+        status: false,
+        message: "User not found",
+      });
+    }
+    console.log(exits);
+    if (exits.Passcode !== parseInt(code)) {
+      return res.status(400).send({
+        status: false,
+        message: "Code not matched",
+      });
+    }
+    const user = await UserModel.findById({
+      _id,
+    });
+    if (!user) {
+      return res.status(404).send({
+        status: false,
+        message: "User not found",
+      });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    if (!hashedPassword) {
+      return res.status(500).send({
+        status: false,
+        message: "Something went wrong",
+      });
+    }
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      _id,
+      { password: hashedPassword },
+      { new: true, useFindAndModify: false }
+    );
+    if (!updatedUser) {
+      return res.status(500).send({
+        status: false,
+        message: "Something went wrong",
+      });
+    }
+    return res.status(200).send({
+      status: true,
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};

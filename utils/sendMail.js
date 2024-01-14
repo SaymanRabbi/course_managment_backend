@@ -25,7 +25,7 @@ const sendMail = async (user) => {
     throw new Error(error.message);
   }
 };
-module.exports = sendMail;
+
 const sendVerificationEmail = async (user, token) => {
   const transporter = nodeMailer.createTransport({
     service: "gmail",
@@ -56,7 +56,6 @@ const sendVerificationEmail = async (user, token) => {
     throw new Error(error.message);
   }
 };
-module.exports = sendVerificationEmail;
 
 const sendForgotPasswordEmail = async (user, code) => {
   const transporter = nodeMailer.createTransport({
@@ -89,4 +88,8 @@ const sendForgotPasswordEmail = async (user, code) => {
   }
 };
 
-module.exports = sendForgotPasswordEmail;
+module.exports = {
+  sendMail,
+  sendVerificationEmail,
+  sendForgotPasswordEmail,
+};
