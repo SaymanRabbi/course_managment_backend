@@ -125,7 +125,7 @@ exports.userLoginController = async (req, res) => {
       maxAge: 86400000, // 1 day
     });
     // Check the number of active devices
-    if (user.activeDevice.length >= 1000) {
+    if (user.activeDevice.length >= 3) {
       return res.status(403).json({
         message: "User already logged in on two devices",
         status: false,
@@ -249,7 +249,6 @@ exports.userChangePasswordController = async (req, res) => {
         message: "User not found",
       });
     }
-    console.log(exits);
     if (exits.Passcode !== parseInt(code)) {
       return res.status(400).send({
         status: false,

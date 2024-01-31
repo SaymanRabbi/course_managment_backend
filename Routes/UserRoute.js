@@ -34,7 +34,7 @@ router.put(
   "/update/:id",
   apiLimiter,
   VerifyToken,
-  authorization("admin", "teacher"),
+  authorization("admin"),
   updateUserController
 );
 /**
