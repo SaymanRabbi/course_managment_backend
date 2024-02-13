@@ -125,9 +125,9 @@ exports.userLoginController = async (req, res) => {
       maxAge: 86400000, // 1 day
     });
     // Check the number of active devices
-    if (user.activeDevice.length >= 3) {
+    if (user.activeDevice.length >= 10) {
       return res.status(403).json({
-        message: "User already logged in on two devices",
+        message: "User already logged in on 10 devices",
         status: false,
       });
     }
@@ -151,7 +151,22 @@ exports.userLoginController = async (req, res) => {
 };
 
 // ------login user-----
-
+exports.useLoginUserWithTokenController = async (req, res) => {
+  try {
+    const { _id } = req.userData;
+    const user = await UserModel.findById(_id);
+    res.status(200).send({
+      status: true,
+      message: "User logged in successfully",
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
 // ------update user role-----
 exports.updateUserController = async (req, res) => {
   try {
@@ -288,6 +303,50 @@ exports.userChangePasswordController = async (req, res) => {
       status: true,
       message: "Password updated successfully",
     });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.useUpdateQuizScoreController = async (req, res) => {
+  try {
+    const { _id } = req.userData;
+    const { id } = req.params;
+    const { courseId, score } = req.body;
+    if (!courseId || score === undefined) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+    const user = await UserModel.findById(_id);
+    if (!user) {
+      return res.status(404).send({
+        status: false,
+        message: "User not found",
+      });
+    }
+    const exits = user.quizs.find((item) => item.quizId == id);
+    if (!exits) {
+      user.quizs.push({ courseId, score, quizId: id });
+      await user.save();
+      return res.status(200).send({
+        status: true,
+        message: "Update Quiz Score successfully",
+      });
+    }
+    if (exits) {
+      const index = user.quizs.findIndex((item) => item.quizId == id);
+      user.quizs[index].score = score;
+      await user.save();
+      return res.status(200).send({
+        status: true,
+        message: "Update Quiz Score successfully",
+      });
+    }
   } catch (error) {
     res.status(500).send({
       status: false,

@@ -19,7 +19,7 @@ router.post(
   "/create",
   apiLimiter,
   VerifyToken,
-  authorization("admin", "teacher"),
+  authorization("admin"),
   createCourseController
 );
 /**
@@ -36,7 +36,7 @@ router.get("/getCourse", getCourseController);
  * @example http://localhost:5000/api/v1/course/updateCourse
  * @rule 1- the request must be patch request with the body of the request contain the following userid and courseid
  */
-router.patch(
+router.put(
   "/updateCourse/:id",
   apiLimiter,
   VerifyToken,
@@ -44,9 +44,8 @@ router.patch(
 );
 router.post(
   "/getQuiz/:id",
-  apiLimiter,
   VerifyToken,
-  authorization("admin", "teacher"),
+  authorization("admin", "teacher", "student"),
   getQuizController
 );
 module.exports = router;

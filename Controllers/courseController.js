@@ -104,7 +104,7 @@ exports.getQuizController = async (req, res) => {
         message: "Course not found",
       });
     }
-    const quiz = course.modules.id(id).lessons.map((lesson) => {
+    const quiz = course.modules.id(id).lessons.filter((lesson) => {
       if (lesson.type === "quiz") {
         return lesson;
       }
