@@ -139,6 +139,7 @@ exports.userLoginController = async (req, res) => {
     res.status(200).json({
       status: true,
       data: rest,
+      token,
       message: "User logged in successfully",
     });
   } catch (error) {
