@@ -6,6 +6,7 @@ const {
   userChangePasswordController,
   useUpdateQuizScoreController,
   useLoginUserWithTokenController,
+  useUpdateUserProfileController,
 } = require("../Controllers/userController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
 const { authorization } = require("../Middlewares/IsAdmin");
@@ -73,5 +74,17 @@ router.put(
   VerifyToken,
   authorization("admin", "teacher", "student"),
   useUpdateQuizScoreController
+);
+/**
+ * @updateAPI to update user profile
+ * @steps 1- send the request to the server
+ * @example http://localhost:5000/api/v1/user/updateprofile
+ * @rule 1- the request must be put request with the id of the user in the params and the body of the request contain the following
+ */
+router.put(
+  "/updateprofile",
+  apiLimiter,
+  VerifyToken,
+  useUpdateUserProfileController
 );
 module.exports = router;

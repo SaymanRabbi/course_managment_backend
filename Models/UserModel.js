@@ -8,6 +8,28 @@ const User = new mongoose.Schema(
       trim: true,
       maxlength: [30, "Your name cannot exceed 30 characters"],
     },
+    lastname: {
+      type: String,
+      trim: true,
+      maxlength: [30, "Your name cannot exceed 30 characters"],
+    },
+    UserName: {
+      type: String,
+      trim: true,
+      unique: true,
+      maxlength: [10, "Your username cannot exceed 10 characters"],
+    },
+    PhoneNumber: {
+      type: Number,
+      trim: true,
+      unique: true,
+      maxlength: [11, "Your phone number cannot exceed 10 characters"],
+    },
+    ExpartIn: {
+      type: String,
+      trim: true,
+      maxlength: [10, "Your ExpartIn cannot exceed 50 characters"],
+    },
     email: {
       type: String,
       required: true,
@@ -46,7 +68,18 @@ const User = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    Biography: {
+      type: String,
+      trim: true,
+      maxlength: [500, "Your Biography cannot exceed 500 characters"],
+    },
+    displayName: {
+      type: String,
+      trim: true,
+      maxlength: [30, "Your name cannot exceed 30 characters"],
+    },
   },
+
   {
     timestamps: true,
   }

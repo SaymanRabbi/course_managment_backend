@@ -154,7 +154,7 @@ exports.userLoginController = async (req, res) => {
 exports.useLoginUserWithTokenController = async (req, res) => {
   try {
     const { _id } = req.userData;
-    const user = await UserModel.findById(_id);
+    const user = await UserModel.findById(_id).select("-password");
     res.status(200).send({
       status: true,
       message: "User logged in successfully",
@@ -347,6 +347,55 @@ exports.useUpdateQuizScoreController = async (req, res) => {
         message: "Update Quiz Score successfully",
       });
     }
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+exports.useUpdateUserProfileController = async (req, res) => {
+  try {
+    const { _id } = req.userData;
+    const {
+      name,
+      lastname,
+      UserName,
+      PhoneNumber,
+      ExpartIn,
+      Biography,
+      displayName,
+    } = req.body;
+    if (!name || !lastname || !UserName || !PhoneNumber || !ExpartIn) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+    const user = await UserModel.findByIdAndUpdate(
+      _id,
+      {
+        name,
+        lastname,
+        UserName,
+        PhoneNumber,
+        ExpartIn,
+        Biography,
+        displayName,
+      },
+      { new: true, useFindAndModify: false }
+    );
+    if (!user) {
+      return res.status(404).send({
+        status: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).send({
+      status: true,
+      message: "Update Profile successfully",
+      data: user,
+    });
   } catch (error) {
     res.status(500).send({
       status: false,
