@@ -315,7 +315,7 @@ exports.useUpdateQuizScoreController = async (req, res) => {
   try {
     const { _id } = req.userData;
     const { id } = req.params;
-    const { courseId, score } = req.body;
+    const { courseId, score, submitAnswerobg } = req.body;
     if (!courseId || score === undefined) {
       return res.status(400).send({
         status: false,
@@ -331,7 +331,7 @@ exports.useUpdateQuizScoreController = async (req, res) => {
     }
     const exits = user.quizs.find((item) => item.quizId == id);
     if (!exits) {
-      user.quizs.push({ courseId, score, quizId: id });
+      user.quizs.push({ courseId, score, quizId: id, submitAnswerobg });
       await user.save();
       return res.status(200).send({
         status: true,
@@ -341,6 +341,7 @@ exports.useUpdateQuizScoreController = async (req, res) => {
     if (exits) {
       const index = user.quizs.findIndex((item) => item.quizId == id);
       user.quizs[index].score = score;
+      user.quizs[index].submitAnswerobg = submitAnswerobg;
       await user.save();
       return res.status(200).send({
         status: true,

@@ -52,6 +52,7 @@ const User = new mongoose.Schema(
         quizId: { type: mongoose.Schema.Types.ObjectId, ref: "Quiz" },
         score: { type: Number, default: 0 },
         courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+        submitAnswerobg: { type: Object },
       },
     ],
     role: {
