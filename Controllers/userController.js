@@ -41,7 +41,6 @@ exports.userCreateController = async (req, res, next) => {
         message: "Please provide all the fields",
       });
     }
-    console.log("hello");
     //  ------send req.body in services-----
     const user = await userCreateServices(req.body);
     if (!user) {
@@ -181,7 +180,7 @@ exports.updateUserController = async (req, res) => {
       });
     }
     const user = await updateUserServices(id, role);
-    // console.log(user);
+
     if (!user) {
       return res.status(404).send({
         status: false,
@@ -316,7 +315,7 @@ exports.useUpdateQuizScoreController = async (req, res) => {
   try {
     const { _id } = req.userData;
     const { id } = req.params;
-    const { courseId, score, submitAnswerobg } = req.body;
+    const { courseId, score, submitAnswerobg, title, quizLength } = req.body;
     if (!courseId || score === undefined) {
       return res.status(400).send({
         status: false,
@@ -332,7 +331,14 @@ exports.useUpdateQuizScoreController = async (req, res) => {
     }
     const exits = user.quizs.find((item) => item.quizId == id);
     if (!exits) {
-      user.quizs.push({ courseId, score, quizId: id, submitAnswerobg });
+      user.quizs.push({
+        courseId,
+        score,
+        quizId: id,
+        submitAnswerobg,
+        title,
+        quizLength,
+      });
       await user.save();
       return res.status(200).send({
         status: true,
@@ -343,6 +349,7 @@ exports.useUpdateQuizScoreController = async (req, res) => {
       const index = user.quizs.findIndex((item) => item.quizId == id);
       user.quizs[index].score = score;
       user.quizs[index].submitAnswerobg = submitAnswerobg;
+
       await user.save();
       return res.status(200).send({
         status: true,

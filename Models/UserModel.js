@@ -21,7 +21,6 @@ const User = new mongoose.Schema(
     PhoneNumber: {
       type: Number,
       trim: true,
-      unique: true,
       maxlength: [11, "Your phone number cannot exceed 10 characters"],
     },
     ExpartIn: {
@@ -52,6 +51,8 @@ const User = new mongoose.Schema(
         score: { type: Number, default: 0 },
         courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
         submitAnswerobg: { type: Object },
+        title: { type: String },
+        quizLength: { type: Number },
       },
     ],
     role: {

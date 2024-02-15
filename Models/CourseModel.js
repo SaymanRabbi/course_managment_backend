@@ -41,6 +41,14 @@ const ModuleSchema = new mongoose.Schema({
 
 const CourseSchema = new mongoose.Schema(
   {
+    price: {
+      type: Number,
+      required: [true, "Please enter your price"],
+    },
+    image: {
+      type: String,
+      required: [true, "Please enter your image"],
+    },
     title: {
       type: String,
       required: [true, "Please enter your title"],
@@ -64,10 +72,25 @@ const CourseSchema = new mongoose.Schema(
       },
     ],
     modules: [ModuleSchema],
+    deadline: { type: Date },
+    startDate: { type: Date },
   },
   {
     timestamps: true,
+    toJSON: { getters: true, virtuals: false },
   }
 );
+// Virtual field to check if the course is active
+CourseSchema.virtual("isActive").get(function () {
+  const currentDate = new Date();
+  // Check if the current date is before the deadline and after the start date
+  return (
+    !this.deadline ||
+    (this.startDate <= currentDate && currentDate <= this.deadline)
+  );
+});
 
+// Apply getters to include virtual fields when converting to JSON or Object
+CourseSchema.set("toObject", { getters: true });
+CourseSchema.set("toJSON", { getters: true });
 module.exports = mongoose.model("Course", CourseSchema);

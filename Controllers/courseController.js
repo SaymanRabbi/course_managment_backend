@@ -3,10 +3,11 @@ const { courseCreateService } = require("../Services/courseServices");
 
 exports.createCourseController = async (req, res) => {
   try {
-    const { title, description, modules } = req.body;
+    const { title, description, modules, image, price } = req.body;
+
     // -------get id from token
     const { _id } = req.userData;
-    if (!title || !description || !modules) {
+    if (!title || !description || !modules || !image || !price) {
       return res.status(400).send({
         status: false,
         message: "Please fill all required fields",
@@ -17,6 +18,8 @@ exports.createCourseController = async (req, res) => {
       description,
       teacherID: _id,
       modules,
+      image,
+      price,
     };
     // -------create course
     const course = await courseCreateService(data);
