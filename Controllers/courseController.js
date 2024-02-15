@@ -73,14 +73,38 @@ exports.getCourseController = async (req, res) => {
 exports.updateCourseController = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!id) {
-      return res.status(400).send({
+    const { newModuleData } = req.body;
+    if (!id || !newModuleData) {
+      return res.status(400).json({
         status: false,
-        message: "Please fill all required fields",
+        message: "Please provide course ID and new module data",
       });
     }
+
+    const updatedCourse = await CourseModel.findOneAndUpdate(
+      { _id: id },
+      {
+        $push: {
+          modules: newModuleData,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedCourse) {
+      return res.status(404).json({
+        status: false,
+        message: "Course not found",
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "New module added to the course successfully",
+      data: updatedCourse,
+    });
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       status: false,
       message: error.message,
     });

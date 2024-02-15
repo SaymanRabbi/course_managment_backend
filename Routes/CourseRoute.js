@@ -40,7 +40,8 @@ router.put(
   "/updateCourse/:id",
   apiLimiter,
   VerifyToken,
-  authorization("admin", "teacher")
+  authorization("admin"),
+  updateCourseController
 );
 router.post(
   "/getQuiz/:id",

@@ -41,6 +41,7 @@ exports.userCreateController = async (req, res, next) => {
         message: "Please provide all the fields",
       });
     }
+    console.log("hello");
     //  ------send req.body in services-----
     const user = await userCreateServices(req.body);
     if (!user) {

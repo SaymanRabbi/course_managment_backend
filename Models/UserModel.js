@@ -16,7 +16,6 @@ const User = new mongoose.Schema(
     UserName: {
       type: String,
       trim: true,
-      unique: true,
       maxlength: [10, "Your username cannot exceed 10 characters"],
     },
     PhoneNumber: {
