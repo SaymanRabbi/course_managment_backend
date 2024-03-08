@@ -49,4 +49,5 @@ router.post(
   authorization("admin", "teacher", "student"),
   getQuizController
 );
+
 module.exports = router;

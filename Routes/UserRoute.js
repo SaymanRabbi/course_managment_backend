@@ -7,6 +7,7 @@ const {
   useUpdateQuizScoreController,
   useLoginUserWithTokenController,
   useUpdateUserProfileController,
+  useUpdateUserProfileProgressController
 } = require("../Controllers/userController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
 const { authorization } = require("../Middlewares/IsAdmin");
@@ -86,5 +87,17 @@ router.put(
   apiLimiter,
   VerifyToken,
   useUpdateUserProfileController
+);
+/**
+ * @patchAPI to update user progress in the application
+ * @steps 1- send the request to the server
+ * @example http://localhost:5000/api/v1/user/profile/progress
+ * @rule 1- the request must be patch request with the body of the request contain the following userid and courseid
+ */
+router.put(
+  "/profile/progress",
+  VerifyToken,
+  authorization("admin", "teacher", "student"),
+  useUpdateUserProfileProgressController
 );
 module.exports = router;

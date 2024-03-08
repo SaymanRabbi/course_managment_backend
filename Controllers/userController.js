@@ -12,6 +12,7 @@ const {
   sendForgotPasswordEmail,
 } = require("../utils/sendMail");
 const UserModel = require("../Models/UserModel");
+const CourseModel = require("../Models/CourseModel");
 
 exports.userCreateController = async (req, res, next) => {
   try {
@@ -412,3 +413,71 @@ exports.useUpdateUserProfileController = async (req, res) => {
     });
   }
 };
+
+exports.useUpdateUserProfileProgressController = async (req, res) => {
+  try {
+    const { _id } = req.userData;
+    const {  lessonId, title } = req.body;
+    if (!lessonId || !title) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+    const user = await UserModel.findById(_id);
+    
+    if (!user) {
+      return res.status(404).send({
+        status: false,
+        message: "User not found",
+      });
+    }
+    const exits = user.courseProgress.find((item) => item.courseId == lessonId && item.title == title);
+    if(exits){
+      return res.status(200).send({
+        status: true,
+        message: "Update Profile Progress successfully",
+      });
+    }
+    // console.log(exits,"hello")
+    // check total video in course
+      const course = await CourseModel.find({})
+      //  console.log(course[0].modules,"course[0].modules")
+      const totalLesson = course[0].modules.reduce((accModule, module) => {
+        const moduleVideoCount = module.lessons.reduce((accLesson, lesson) => {
+          if (lesson.type === "video") {
+            accLesson++;
+          }
+          return accLesson;
+        }, 0);
+      
+        return accModule + moduleVideoCount;
+      }, 0);
+    if (!exits) {
+      user.courseProgress.push({
+        lessonId,
+        title,
+      });
+      const progress = user.seeTotalVideo + 1;
+      user.seeTotalVideo = progress;
+      user.prfileProgress = (progress / totalLesson) * 100;
+      await user.save();
+      return res.status(200).send({
+        status: true,
+        message: "Update Profile Progress successfully",
+      });
+    }
+    if (exits) {
+      return res.status(200).send({
+        status: true,
+        message: "Update Profile Progress successfully",
+      });
+    }
+    
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+}

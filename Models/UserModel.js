@@ -55,6 +55,20 @@ const User = new mongoose.Schema(
         quizLength: { type: Number },
       },
     ],
+    courseProgress:[
+      {
+        courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+        title: { type: String }
+      }
+    ],
+    seeTotalVideo: {
+      type: Number,
+      default: 0,
+    },
+    prfileProgress: {
+      type: Number,
+      default: 0,
+    },
     role: {
       type: String,
       enum: ["student", "teacher", "admin"],
