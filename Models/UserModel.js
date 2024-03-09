@@ -57,7 +57,7 @@ const User = new mongoose.Schema(
     ],
     courseProgress:[
       {
-        courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+        courseId: { type: String },
         title: { type: String }
       }
     ],

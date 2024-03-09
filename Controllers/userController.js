@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { createToken } = require("../Middlewares/CreateToken");
 const {
   userCreateServices,
@@ -432,7 +433,12 @@ exports.useUpdateUserProfileProgressController = async (req, res) => {
         message: "User not found",
       });
     }
-    const exits = user.courseProgress.find((item) => item.courseId == lessonId && item.title == title);
+    const exits = user.courseProgress.find((item) => {
+      if(item.courseId == lessonId && item.title == title){
+        return true
+      }
+      return false
+    });
     if(exits){
       return res.status(200).send({
         status: true,
@@ -455,7 +461,7 @@ exports.useUpdateUserProfileProgressController = async (req, res) => {
       }, 0);
     if (!exits) {
       user.courseProgress.push({
-        lessonId,
+        courseId: lessonId,
         title,
       });
       const progress = user.seeTotalVideo + 1;
