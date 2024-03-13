@@ -1,6 +1,14 @@
 const CourseModel = require("../Models/CourseModel");
 const { courseCreateService } = require("../Services/courseServices");
-
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+          
+cloudinary.config({ 
+  cloud_name: 'dnr5u3jpb', 
+  api_key: '169991872792189', 
+  api_secret: 'eB1Gjuqv1mIorndCfpyF5_F4RN8' 
+});
+const upload = multer({ dest: 'uploads/' });
 exports.createCourseController = async (req, res) => {
   try {
     const { title, description, modules, image, price } = req.body;
@@ -76,8 +84,10 @@ exports.getCourseController = async (req, res) => {
 exports.updateCourseController = async (req, res) => {
   try {
     const { id } = req.params;
-    const { newModuleData } = req.body;
-    if (!id || !newModuleData) {
+    
+    
+   
+    if (!id || !req.body) {
       return res.status(400).json({
         status: false,
         message: "Please provide course ID and new module data",
@@ -88,7 +98,7 @@ exports.updateCourseController = async (req, res) => {
       { _id: id },
       {
         $push: {
-          modules: newModuleData,
+          modules: req.body,
         },
       },
       { new: true }
