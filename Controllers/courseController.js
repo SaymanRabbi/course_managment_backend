@@ -1,4 +1,5 @@
 const CourseModel = require("../Models/CourseModel");
+const Notification = require("../Models/Notification");
 const { courseCreateService } = require("../Services/courseServices");
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
@@ -84,16 +85,12 @@ exports.getCourseController = async (req, res) => {
 exports.updateCourseController = async (req, res) => {
   try {
     const { id } = req.params;
-    
-    
-   
     if (!id || !req.body) {
       return res.status(400).json({
         status: false,
         message: "Please provide course ID and new module data",
       });
     }
-
     const updatedCourse = await CourseModel.findOneAndUpdate(
       { _id: id },
       {
@@ -103,14 +100,15 @@ exports.updateCourseController = async (req, res) => {
       },
       { new: true }
     );
-
     if (!updatedCourse) {
       return res.status(404).json({
         status: false,
         message: "Course not found",
       });
     }
-
+    await Notification.create({
+      message: "New module added to the course successfully",
+    })
     res.status(200).json({
       status: true,
       message: "New module added to the course successfully",
