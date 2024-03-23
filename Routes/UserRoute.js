@@ -1,4 +1,5 @@
 const {
+  userGetAllUser,
   userCreateController,
   userLoginController,
   updateUserController,
@@ -14,6 +15,8 @@ const { authorization } = require("../Middlewares/IsAdmin");
 const VerifyToken = require("../Middlewares/VerifyToken");
 const { VerifyTokenServices } = require("../Services/userServices");
 const router = require("express").Router();
+
+router.get("/getallusers",VerifyToken,authorization("admin"),userGetAllUser );
 /**
  * @postAPI to register user in the application
  * @steps 1- send the request to the server
@@ -37,7 +40,7 @@ router.get("/login/token", VerifyToken, useLoginUserWithTokenController);
 /**
  * @updateAPI to update user role
  * @steps 1- send the request to the server
- * @example http://localhost:5000/api/v1/user/updateRole
+ * @example http://localhost:5000/api/v1/user/update
  * @rule 1- the request must be put request with the id of the user in the params and the body of the request contain the following
  */
 

@@ -14,7 +14,28 @@ const {
 } = require("../utils/sendMail");
 const UserModel = require("../Models/UserModel");
 const CourseModel = require("../Models/CourseModel");
-
+exports.userGetAllUser = async (req, res) => {
+  try {
+     
+    const users = await UserModel.find({}).select("-password");
+    if (!users) {
+      return res.status(404).send({
+        status: false,
+        message: "Users not found",
+      });
+    }
+    res.status(200).send({
+      status: true,
+      message: "Users found successfully",
+      data: users,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+}
 exports.userCreateController = async (req, res, next) => {
   try {
     // -------get name email password from req.body
@@ -173,15 +194,14 @@ exports.useLoginUserWithTokenController = async (req, res) => {
 exports.updateUserController = async (req, res) => {
   try {
     const { id } = req.params;
-    const { role } = req.body;
-
-    if (!id || !role) {
+    console.log(id, "id");
+    if (!id) {
       return res.status(400).send({
         status: false,
         message: "Please provide all the fields",
       });
     }
-    const user = await updateUserServices(id, role);
+    const user = await updateUserServices(id, 'admin');
 
     if (!user) {
       return res.status(404).send({
