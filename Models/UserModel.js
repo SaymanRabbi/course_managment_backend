@@ -23,6 +23,10 @@ const User = new mongoose.Schema(
       trim: true,
       maxlength: [11, "Your phone number cannot exceed 10 characters"],
     },
+    ProfileImage:{
+      type: String,
+      default: ""
+    },
     ExpartIn: {
       type: String,
       trim: true,
@@ -54,6 +58,13 @@ const User = new mongoose.Schema(
         title: { type: String },
         quizLength: { type: Number },
       },
+    ],
+    assignment: [
+      {
+        assignmentId: { type: mongoose.Schema.Types.ObjectId},
+        totalMarks: { type: Number, default: 0 },
+        submitAnswerobg: { type: String }
+      }
     ],
     courseProgress:[
       {
