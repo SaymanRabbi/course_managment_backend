@@ -61,9 +61,11 @@ const User = new mongoose.Schema(
     ],
     assignment: [
       {
+        title: { type: String },
         assignmentId: { type: mongoose.Schema.Types.ObjectId},
         totalMarks: { type: Number, default: 0 },
-        submitAnswerobg: { type: String }
+        submitAnswerobg: { type: String },
+        adminSeen: { type: Boolean, default: false },
       }
     ],
     courseProgress:[

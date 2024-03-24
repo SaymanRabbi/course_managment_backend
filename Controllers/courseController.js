@@ -188,7 +188,7 @@ exports.getNotificationController = async (req, res) => {
 exports.updateAssignmentController = async (req, res) => {
   try {
       const { _id } = req.userData;
-      const { assignmentId, totalMarks, submitAnswerobg } = req.body;
+      const { assignmentId, totalMarks, submitAnswerobg,title } = req.body;
       if (!assignmentId || !totalMarks || !submitAnswerobg) {
           return res.status(400).send({
               status: false,
@@ -203,6 +203,7 @@ exports.updateAssignmentController = async (req, res) => {
                       assignmentId,
                       totalMarks,
                       submitAnswerobg,
+                      title
                   },
               },
           },
