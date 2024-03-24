@@ -3,7 +3,8 @@ const {
   getCourseController,
   updateCourseController,
   getQuizController,
-  getNotificationController
+  getNotificationController,
+  updateAssignmentController
 
 } = require("../Controllers/courseController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
@@ -56,5 +57,10 @@ router.get(
   VerifyToken,
   getNotificationController
 )
-  
+router.put(
+  "/assignment",
+  VerifyToken,
+  authorization("admin","student"),
+  updateAssignmentController
+)
 module.exports = router;

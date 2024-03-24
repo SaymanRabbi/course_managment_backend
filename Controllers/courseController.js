@@ -3,7 +3,7 @@ const Notification = require("../Models/Notification");
 const { courseCreateService } = require("../Services/courseServices");
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
-          
+const UserModel = require("../Models/UserModel");     
 cloudinary.config({ 
   cloud_name: 'dnr5u3jpb', 
   api_key: '169991872792189', 
@@ -177,6 +177,53 @@ exports.getNotificationController = async (req, res) => {
       message: "Notification found successfully",
       data: notification,
     });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+}
+// update assignment
+exports.updateAssignmentController = async (req, res) => {
+  try {
+      const { _id } = req.userData;
+      const { assignmentId, totalMarks, submitAnswerobg } = req.body;
+      if (!assignmentId || !totalMarks || !submitAnswerobg) {
+          return res.status(400).send({
+              status: false,
+              message: "Please fill all required fields",
+          });
+      }
+      const updatedAssignment = await UserModel.findOneAndUpdate(
+          { _id},
+          {
+              $push: {
+                  assignment: {
+                      assignmentId,
+                      totalMarks,
+                      submitAnswerobg,
+                  },
+              },
+          },
+          { new: true }
+      )
+      console.log(updatedAssignment)
+      if (!updatedAssignment) {
+          return res.status(404).send({
+              status: false,
+              message: "Assignment not found",
+          });
+      }
+      // todo: create notification
+      // await Notification.create({
+      //     message: "Assignment submitted successfully",
+      // })
+      res.status(200).send({
+          status: true,
+          message: "Assignment submitted successfully",
+          data: updatedAssignment,
+      });
   } catch (error) {
     res.status(500).send({
       status: false,
