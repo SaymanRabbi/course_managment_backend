@@ -507,3 +507,40 @@ exports.useUpdateUserProfileProgressController = async (req, res) => {
     });
   }
 }
+
+exports.updateImageController = async (req, res) => {
+  try {
+    const { _id } = req.userData;
+    const { imageUrl } = req.body
+    if (!imageUrl) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+    const user = await UserModel.findByIdAndUpdate(
+      _id,
+      {
+        ProfileImage: imageUrl,
+      },
+      { new: true, useFindAndModify: false }
+    );
+    if (!user) {
+      return res.status(404).send({
+        status: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).send({
+      status: true,
+      message: "Update Image successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.log(error, "error");
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+}

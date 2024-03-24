@@ -162,3 +162,25 @@ exports.getQuizController = async (req, res) => {
     });
   }
 };
+
+exports.getNotificationController = async (req, res) => {
+  try {
+    const notification = await Notification.find({});
+    if (!notification) {
+      return res.status(400).send({
+        status: false,
+        message: "Notification not found",
+      });
+    }
+    res.status(200).send({
+      status: true,
+      message: "Notification found successfully",
+      data: notification,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+}

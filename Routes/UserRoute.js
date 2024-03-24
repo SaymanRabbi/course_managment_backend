@@ -8,7 +8,8 @@ const {
   useUpdateQuizScoreController,
   useLoginUserWithTokenController,
   useUpdateUserProfileController,
-  useUpdateUserProfileProgressController
+  useUpdateUserProfileProgressController,
+  updateImageController
 } = require("../Controllers/userController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
 const { authorization } = require("../Middlewares/IsAdmin");
@@ -103,4 +104,5 @@ router.put(
   authorization("admin", "teacher", "student"),
   useUpdateUserProfileProgressController
 );
+router.put("/updateImgurl", VerifyToken, updateImageController);
 module.exports = router;
