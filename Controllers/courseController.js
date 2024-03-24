@@ -209,7 +209,7 @@ exports.updateAssignmentController = async (req, res) => {
           },
           { new: true }
       )
-      console.log(updatedAssignment)
+    
       if (!updatedAssignment) {
           return res.status(404).send({
               status: false,

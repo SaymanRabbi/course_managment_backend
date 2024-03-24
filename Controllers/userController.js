@@ -194,7 +194,7 @@ exports.useLoginUserWithTokenController = async (req, res) => {
 exports.updateUserController = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id, "id");
+ 
     if (!id) {
       return res.status(400).send({
         status: false,
@@ -465,10 +465,10 @@ exports.useUpdateUserProfileProgressController = async (req, res) => {
         message: "Update Profile Progress successfully",
       });
     }
-    // console.log(exits,"hello")
+
     // check total video in course
       const course = await CourseModel.find({})
-      //  console.log(course[0].modules,"course[0].modules")
+      
       const totalLesson = course[0].modules.reduce((accModule, module) => {
         const moduleVideoCount = module.lessons.reduce((accLesson, lesson) => {
           if (lesson.type === "video") {
@@ -537,7 +537,7 @@ exports.updateImageController = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    console.log(error, "error");
+   
     res.status(500).send({
       status: false,
       message: error.message,
