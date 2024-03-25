@@ -544,3 +544,31 @@ exports.updateImageController = async (req, res) => {
     });
   }
 }
+exports.instructorInfoController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+    const user = await UserModel.findById(id).select("-password");
+    if (!user) {
+      return res.status(404).send({
+        status: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).send({
+      status: true,
+      message: "User found successfully",
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+}
