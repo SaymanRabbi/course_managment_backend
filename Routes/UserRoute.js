@@ -107,4 +107,5 @@ router.put(
 );
 router.put("/updateImgurl", VerifyToken, updateImageController);
 router.get("/instructorInfo/:id",instructorInfoController)
+
 module.exports = router;

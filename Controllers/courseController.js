@@ -165,7 +165,7 @@ exports.getQuizController = async (req, res) => {
 
 exports.getNotificationController = async (req, res) => {
   try {
-    const notification = await Notification.find({});
+    const notification = await Notification.find({}).sort({createdAt:-1});
     if (!notification) {
       return res.status(400).send({
         status: false,
@@ -225,6 +225,24 @@ exports.updateAssignmentController = async (req, res) => {
           message: "Assignment submitted successfully",
           data: updatedAssignment,
       });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+}
+exports.notificationController = async (req, res) => {
+  try {
+    
+    const {text} = req.body
+    console.log(text)
+   const data = await Notification.create({message:text})
+    res.status(200).send({
+      status: true,
+      message: "Add Notification successfully",
+      data
+    });
   } catch (error) {
     res.status(500).send({
       status: false,

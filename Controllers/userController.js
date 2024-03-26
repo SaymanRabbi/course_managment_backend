@@ -14,6 +14,7 @@ const {
 } = require("../utils/sendMail");
 const UserModel = require("../Models/UserModel");
 const CourseModel = require("../Models/CourseModel");
+const Notification = require('../Models/Notification');
 exports.userGetAllUser = async (req, res) => {
   try {
      
