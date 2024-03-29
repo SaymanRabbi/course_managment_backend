@@ -5,7 +5,9 @@ const {
   getQuizController,
   getNotificationController,
   updateAssignmentController,
-  notificationController
+  notificationController,
+  getAssignmentWithIdController,
+  getAllAssignmentsController
 
 } = require("../Controllers/courseController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
@@ -58,11 +60,24 @@ router.get(
   VerifyToken,
   getNotificationController
 )
-router.put(
+router.post(
   "/assignment",
   VerifyToken,
   authorization("admin","student"),
   updateAssignmentController
 )
+router.get(
+  "/getAssignments",
+  VerifyToken,
+  authorization("admin","student"),
+  getAssignmentWithIdController,
+)
+router.get(
+  "/AllAssignments",
+  VerifyToken,
+  authorization("admin"),
+  getAllAssignmentsController,
+)
+
 router.post("/newNotification",VerifyToken,authorization("admin"),notificationController)
 module.exports = router;
