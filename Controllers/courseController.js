@@ -5,6 +5,7 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const UserModel = require("../Models/UserModel");     
 const AssignmentModal = require("../Models/AssignmentModal");
+const { sendAssignmentMark } = require("../utils/sendMail");
 cloudinary.config({ 
   cloud_name: 'dnr5u3jpb', 
   api_key: '169991872792189', 
@@ -169,8 +170,19 @@ exports.getQuizController = async (req, res) => {
 
 exports.getNotificationController = async (req, res) => {
   try {
-    const notification = await Notification.find({}).sort({createdAt:-1});
-    if (!notification) {
+    const { _id } = req.userData;
+    // Fetch notifications where individual is false or individual is true and userId matches
+const notifications = await Notification.find({
+  $or: [
+      { individual: false }, // Filter for notifications meant for all users
+      { $and: [ // Filter for individual notifications meant for the current user
+          { individual: true },
+          { userId: _id }
+      ]}
+  ]
+}).sort({ createdAt: -1 });
+
+    if (!notifications) {
       return res.status(400).send({
         status: false,
         message: "Notification not found",
@@ -179,7 +191,7 @@ exports.getNotificationController = async (req, res) => {
     res.status(200).send({
       status: true,
       message: "Notification found successfully",
-      data: notification,
+      data: notifications,
     });
   } catch (error) {
     res.status(500).send({
@@ -275,7 +287,7 @@ exports.getAssignmentWithIdController = async (req, res) => {
 }
 exports.getAllAssignmentsController = async (req, res) => {
   try {
-    const assignment = await AssignmentModal.find({}).populate("userId");
+    const assignment = await AssignmentModal.find({}).populate("userId").sort({adminSeen:1,createdAt:-1});
     if (!assignment) {
       return res.status(400).send({
         status: false,
@@ -285,6 +297,51 @@ exports.getAllAssignmentsController = async (req, res) => {
     res.status(200).send({
       status: true,
       message: "Assignment found successfully",
+      data: assignment,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+}
+exports.updateAssignmentMarkController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { AssignmentMarks,userId,AssignmentNote } = req?.body?.datas
+    Number(AssignmentMarks)
+    if (!id || !AssignmentMarks) {
+      return res.status(400).send({
+        status: false,
+        message: "Please fill all required fields",
+      });
+    }
+    const assignment = await AssignmentModal.findByIdAndUpdate({
+      _id: id,
+    },{
+      AssignmentMarks,
+      adminSeen:true,
+    });
+    if (!assignment) {
+      return res.status(400).send({
+        status: false,
+        message: "Assignment not found",
+      });
+    }
+    await Notification.create({
+      message: `Assignment Mark updated successfully you got ${AssignmentMarks} marks out of 60`,
+      individual:true,
+      userId:userId
+    })
+    const user = await UserModel.findById(userId)
+    await sendAssignmentMark({
+      name:user.name,
+      email:user.email
+    },AssignmentMarks,AssignmentNote)
+    res.status(200).send({
+      status: true,
+      message: "Assignment updated successfully",
       data: assignment,
     });
   } catch (error) {

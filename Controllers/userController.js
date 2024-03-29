@@ -149,12 +149,12 @@ exports.userLoginController = async (req, res) => {
       maxAge: 86400000, // 1 day
     });
     // Check the number of active devices
-    if (user.activeDevice.length >= 10) {
-      return res.status(403).json({
-        message: "User already logged in on 10 devices",
-        status: false,
-      });
-    }
+    // if (user.activeDevice.length >= 10) {
+    //   return res.status(403).json({
+    //     message: "User already logged in on 10 devices",
+    //     status: false,
+    //   });
+    // }
     // Update the activeDevices array with the current device identifier
     user.activeDevice = [...user.activeDevice, deviceIdentifier];
     await user.save();

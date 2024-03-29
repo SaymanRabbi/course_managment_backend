@@ -7,7 +7,8 @@ const {
   updateAssignmentController,
   notificationController,
   getAssignmentWithIdController,
-  getAllAssignmentsController
+  getAllAssignmentsController,
+  updateAssignmentMarkController
 
 } = require("../Controllers/courseController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
@@ -78,6 +79,11 @@ router.get(
   authorization("admin"),
   getAllAssignmentsController,
 )
-
+router.put(
+  "/updateAssignmentMark/:id",
+  VerifyToken,
+  authorization("admin"),
+  updateAssignmentMarkController
+  )
 router.post("/newNotification",VerifyToken,authorization("admin"),notificationController)
 module.exports = router;
