@@ -573,3 +573,57 @@ exports.instructorInfoController = async (req, res) => {
     });
   }
 }
+
+exports.getLeaderboardController = async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const users = await UserModel.find({}).select("-password");
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "Users not found",
+      });
+    }
+
+    // Calculate total score for each user
+    const leaderboard = users.map(user => {
+      // Calculate total quiz score
+      const quizScore = user.quizs.reduce((total, quiz) => total + quiz.score, 0);
+
+      // Calculate total assignment score
+      const assignmentScore = user.assignment.reduce((total, mark) => Number(total) + Number(mark), 0);
+
+      // Calculate total score (sum of quiz score and assignment score)
+      const totalScore = quizScore + assignmentScore;
+
+      // Return user with their total score
+      return { user, totalScore };
+    });
+
+    // Sort users based on total score in descending order
+    // Filter out users with null totalScore
+const filteredLeaderboard = leaderboard.filter(entry => entry.totalScore !== null);
+
+filteredLeaderboard.sort((a, b) => b.totalScore - a.totalScore);
+
+// Prepare response
+const responseData = filteredLeaderboard.map(entry => ({
+  name: entry.user.name,
+  totalScore: entry.totalScore,
+  image: entry.user.ProfileImage || '' // Assuming ProfileImage is the property holding the user's image
+}));
+
+    res.status(200).json({
+      status: true,
+      message: "Leaderboard generated successfully",
+      data: responseData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};

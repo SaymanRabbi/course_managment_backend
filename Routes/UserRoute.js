@@ -10,7 +10,8 @@ const {
   useUpdateUserProfileController,
   useUpdateUserProfileProgressController,
   updateImageController,
-  instructorInfoController
+  instructorInfoController,
+  getLeaderboardController
 } = require("../Controllers/userController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
 const { authorization } = require("../Middlewares/IsAdmin");
@@ -102,10 +103,10 @@ router.put(
 router.put(
   "/profile/progress",
   VerifyToken,
-  authorization("admin", "teacher", "student"),
+  authorization("admin", "student"),
   useUpdateUserProfileProgressController
 );
 router.put("/updateImgurl", VerifyToken, updateImageController);
 router.get("/instructorInfo/:id",instructorInfoController)
-
+router.get("/leaderboard",VerifyToken,authorization("admin", "student"),getLeaderboardController);
 module.exports = router;

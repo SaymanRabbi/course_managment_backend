@@ -59,15 +59,7 @@ const User = new mongoose.Schema(
         quizLength: { type: Number },
       },
     ],
-    assignment: [
-      {
-        title: { type: String },
-        assignmentId: { type: mongoose.Schema.Types.ObjectId},
-        totalMarks: { type: Number, default: 0 },
-        submitAnswerobg: { type: String },
-        adminSeen: { type: Boolean, default: false },
-      }
-    ],
+    assignment: [],
     courseProgress:[
       {
         courseId: { type: String },

@@ -317,6 +317,11 @@ exports.updateAssignmentMarkController = async (req, res) => {
         message: "Please fill all required fields",
       });
     }
+    const userUpdate = await UserModel.findById({
+      _id: userId,
+    });
+     userUpdate.assignment.push(AssignmentMarks)
+     userUpdate.save()
     const assignment = await AssignmentModal.findByIdAndUpdate({
       _id: id,
     },{
