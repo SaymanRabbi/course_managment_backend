@@ -195,6 +195,7 @@ exports.useLoginUserWithTokenController = async (req, res) => {
 exports.updateUserController = async (req, res) => {
   try {
     const { id } = req.params;
+    const {role} = req.body
  
     if (!id) {
       return res.status(400).send({
@@ -202,7 +203,7 @@ exports.updateUserController = async (req, res) => {
         message: "Please provide all the fields",
       });
     }
-    const user = await updateUserServices(id, 'admin');
+    const user = await updateUserServices(id, role);
 
     if (!user) {
       return res.status(404).send({
