@@ -19,7 +19,7 @@ const VerifyToken = require("../Middlewares/VerifyToken");
 const { VerifyTokenServices } = require("../Services/userServices");
 const router = require("express").Router();
 
-router.get("/getallusers",VerifyToken,authorization("admin"),userGetAllUser );
+router.get("/getallusers",VerifyToken,authorization("admin","student"),userGetAllUser );
 /**
  * @postAPI to register user in the application
  * @steps 1- send the request to the server
