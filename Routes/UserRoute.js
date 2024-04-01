@@ -11,7 +11,11 @@ const {
   useUpdateUserProfileProgressController,
   updateImageController,
   instructorInfoController,
-  getLeaderboardController
+  getLeaderboardController,
+  conversationController,
+  getCoversationIdController,
+  messageController,
+  getCoversationwithIdController
 } = require("../Controllers/userController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
 const { authorization } = require("../Middlewares/IsAdmin");
@@ -109,4 +113,10 @@ router.put(
 router.put("/updateImgurl", VerifyToken, updateImageController);
 router.get("/instructorInfo/:id",instructorInfoController)
 router.get("/leaderboard",VerifyToken,authorization("admin", "student"),getLeaderboardController);
+// messages routes
+router.post('/conversation',VerifyToken,authorization("admin", "student"),conversationController)
+router.get('/conversation/:userId',VerifyToken,authorization("admin", "student"),getCoversationIdController)
+router.post("/message",VerifyToken,authorization("admin", "student"),messageController)
+router.get("/message/:conversationId",VerifyToken,authorization("admin", "student"),getCoversationwithIdController)
+// messages routes
 module.exports = router;

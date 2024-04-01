@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+
 const { createToken } = require("../Middlewares/CreateToken");
 const {
   userCreateServices,
@@ -14,7 +14,9 @@ const {
 } = require("../utils/sendMail");
 const UserModel = require("../Models/UserModel");
 const CourseModel = require("../Models/CourseModel");
-const Notification = require('../Models/Notification');
+
+const ConversationModal = require('../Models/ConversationModal');
+const MessagesModal = require("../Models/MessagesModal");
 exports.userGetAllUser = async (req, res) => {
   try {
      
@@ -625,6 +627,204 @@ const responseData = filteredLeaderboard.map(entry => ({
       status: false,
       message: "Internal server error",
       error: error.message,
+    });
+  }
+};
+
+exports.conversationController = async (req, res) => {
+  try {
+    const { members } = req.body;
+    if (!members) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+    // already exits reciver
+    const conversationexit = await ConversationModal.find({
+      members: { $all: [members.senderId, members.receiverId] },
+    }).select("-password");
+    if (conversationexit.length > 0) {
+      return res.status(200).send({
+        status: true,
+        message: "Conversation already exits",
+      });
+    }
+    const conversation = await ConversationModal.create({
+      members:[
+        members.senderId,
+        members.receiverId
+      ]
+    });
+    if (!conversation) {
+      return res.status(500).send({
+        status: false,
+        message: "Something went wrong",
+      });
+    }
+    return res.status(200).send({
+      status: true,
+      message: "Conversation created successfully",
+      data: conversation,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.getCoversationIdController = async (req, res) => {
+  try {
+    const {_id} = req.userData
+     
+    if (!_id) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+    const conversation = await ConversationModal.find({
+    members:  {$in: [
+        _id // Check if the user is a sender
+      ]}
+    });
+    if (!conversation) {
+      return res.status(404).send({
+        status: false,
+        message: "Conversation not found",
+      });
+    }
+    
+    const conversationUserData = Promise.all(conversation.map( async (item) => {
+      const receiverId = await item.members.find((member) => member !== _id)
+      const user = await UserModel.findById(receiverId).select("-password")
+      return {
+      conversationId: item._id,
+      user:{
+        name: user?.name,
+        email: user?.email,
+        ProfileImage: user.ProfileImage,
+        role:user?.role,
+        _id:user._id
+      }
+    }
+      
+    }))
+  const datas =   await conversationUserData
+    
+    return res.status(200).send({
+      status: true,
+      message: "Conversation found successfully",
+      data: datas,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.messageController = async (req, res) => {
+  try {
+    const {_id} = req.userData
+     
+    const { conversationId, text,receiverId='' } = req?.body?.data
+    if ( !_id || !text) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+   
+    if(!conversationId === 'new' && receiverId){
+      const newConversation = await ConversationModal.create({
+        members: [_id, receiverId]
+      }).save();
+      const NewMessages = await MessagesModal.create(
+        {
+          conversationId: newConversation._id,
+          _id,
+          message: text,
+        }
+      ).save();
+      res.status(200).send({
+        status: true,
+        message: "Message sent successfully",
+      })
+    }
+    else if( !conversationId && !receiverId){
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+        
+      })
+    }
+    const data = await MessagesModal.create(
+      {
+        conversationId: conversationId,
+        senderId:_id,
+        message: text,
+      }
+    )
+    
+    return res.status(200).send({
+      status: true,
+      message: "Message sent successfully",
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.getCoversationwithIdController = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    if (!conversationId) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide all the fields",
+      });
+    }
+    const messages = await MessagesModal.find({ 
+      conversationId});
+    if (!messages) {
+      return res.status(404).send({
+        status: false,
+        message: "Messages not found",
+      });
+    }
+    const messagesData = Promise.all(messages.map( async (item) => {
+      
+      const user = await UserModel.findById(item?.senderId).select("-password")
+      return {
+        message: item.message,
+        user:{
+          name: user.name,
+          email: user.email,
+          ProfileImage: user.ProfileImage,
+          role:user?.role,
+          _id:user._id
+        }
+      }
+    }
+    ))
+  
+    const datas =   await messagesData
+    return res.status(200).send({
+      status: true,
+      message: "Messages found successfully",
+      data: datas,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
     });
   }
 };
