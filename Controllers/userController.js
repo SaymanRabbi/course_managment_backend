@@ -645,8 +645,8 @@ exports.conversationController = async (req, res) => {
       members: { $all: [members.senderId, members.receiverId] },
     }).select("-password");
     if (conversationexit.length > 0) {
-      return res.status(200).send({
-        status: true,
+      return res.status(400).send({
+        status: false,
         message: "Conversation already exits",
       });
     }
@@ -665,7 +665,7 @@ exports.conversationController = async (req, res) => {
     return res.status(200).send({
       status: true,
       message: "Conversation created successfully",
-      data: conversation,
+      data: conversation._id,
     });
   } catch (error) {
     res.status(500).send({
@@ -732,6 +732,7 @@ exports.messageController = async (req, res) => {
     const {_id} = req.userData
      
     const { conversationId, text,receiverId='' } = req?.body?.data
+
     if ( !_id || !text) {
       return res.status(400).send({
         status: false,
@@ -739,17 +740,19 @@ exports.messageController = async (req, res) => {
       });
     }
    
-    if(!conversationId === 'new' && receiverId){
+    if(conversationId === 'new' && receiverId){
       const newConversation = await ConversationModal.create({
         members: [_id, receiverId]
       }).save();
+     
       const NewMessages = await MessagesModal.create(
         {
           conversationId: newConversation._id,
-          _id,
+          senderId:_id,
           message: text,
         }
       ).save();
+     
       res.status(200).send({
         status: true,
         message: "Message sent successfully",
@@ -785,6 +788,7 @@ exports.messageController = async (req, res) => {
 exports.getCoversationwithIdController = async (req, res) => {
   try {
     const { conversationId } = req.params;
+    
     if (!conversationId) {
       return res.status(400).send({
         status: false,
