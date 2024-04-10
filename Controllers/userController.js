@@ -1,4 +1,3 @@
-
 const { createToken } = require("../Middlewares/CreateToken");
 const {
   userCreateServices,
@@ -15,10 +14,8 @@ const {
 const UserModel = require("../Models/UserModel");
 const CourseModel = require("../Models/CourseModel");
 
-
 exports.userGetAllUser = async (req, res) => {
   try {
-     
     const users = await UserModel.find({}).select("-password");
     if (!users) {
       return res.status(404).send({
@@ -37,7 +34,7 @@ exports.userGetAllUser = async (req, res) => {
       message: error.message,
     });
   }
-}
+};
 exports.userCreateController = async (req, res, next) => {
   try {
     // -------get name email password from req.body
@@ -196,8 +193,8 @@ exports.useLoginUserWithTokenController = async (req, res) => {
 exports.updateUserController = async (req, res) => {
   try {
     const { id } = req.params;
-    const {role} = req.body
- 
+    const { role } = req.body;
+
     if (!id) {
       return res.status(400).send({
         status: false,
@@ -264,6 +261,7 @@ exports.userForgotPasswordController = async (req, res) => {
       status: true,
       message: "Code sent successfully",
       code: makeCode,
+      user: user,
     });
   } catch (error) {
     res.status(500).send({
@@ -276,6 +274,7 @@ exports.userForgotPasswordController = async (req, res) => {
 exports.userChangePasswordController = async (req, res) => {
   try {
     const { password, code, _id } = req.body;
+
     if (!password || !code || !_id) {
       return res.status(400).send({
         status: false,
@@ -283,7 +282,9 @@ exports.userChangePasswordController = async (req, res) => {
       });
     }
     // -----check id exits or not
-    const exits = await ChangesPass.findOne({ userId: _id });
+    const exits = await ChangesPass.findOne({
+      userId: _id,
+    });
     if (!exits) {
       return res.status(404).send({
         status: false,
@@ -441,7 +442,7 @@ exports.useUpdateUserProfileController = async (req, res) => {
 exports.useUpdateUserProfileProgressController = async (req, res) => {
   try {
     const { _id } = req.userData;
-    const {  lessonId, title } = req.body;
+    const { lessonId, title } = req.body;
     if (!lessonId || !title) {
       return res.status(400).send({
         status: false,
@@ -449,7 +450,7 @@ exports.useUpdateUserProfileProgressController = async (req, res) => {
       });
     }
     const user = await UserModel.findById(_id);
-    
+
     if (!user) {
       return res.status(404).send({
         status: false,
@@ -457,12 +458,12 @@ exports.useUpdateUserProfileProgressController = async (req, res) => {
       });
     }
     const exits = user.courseProgress.find((item) => {
-      if(item.courseId == lessonId && item.title == title){
-        return true
+      if (item.courseId == lessonId && item.title == title) {
+        return true;
       }
-      return false
+      return false;
     });
-    if(exits){
+    if (exits) {
       return res.status(200).send({
         status: true,
         message: "Update Profile Progress successfully",
@@ -470,18 +471,18 @@ exports.useUpdateUserProfileProgressController = async (req, res) => {
     }
 
     // check total video in course
-      const course = await CourseModel.find({})
-      
-      const totalLesson = course[0].modules.reduce((accModule, module) => {
-        const moduleVideoCount = module.lessons.reduce((accLesson, lesson) => {
-          if (lesson.type === "video") {
-            accLesson++;
-          }
-          return accLesson;
-        }, 0);
-      
-        return accModule + moduleVideoCount;
+    const course = await CourseModel.find({});
+
+    const totalLesson = course[0].modules.reduce((accModule, module) => {
+      const moduleVideoCount = module.lessons.reduce((accLesson, lesson) => {
+        if (lesson.type === "video") {
+          accLesson++;
+        }
+        return accLesson;
       }, 0);
+
+      return accModule + moduleVideoCount;
+    }, 0);
     if (!exits) {
       user.courseProgress.push({
         courseId: lessonId,
@@ -502,19 +503,18 @@ exports.useUpdateUserProfileProgressController = async (req, res) => {
         message: "Update Profile Progress successfully",
       });
     }
-    
   } catch (error) {
     res.status(500).send({
       status: false,
       message: error.message,
     });
   }
-}
+};
 
 exports.updateImageController = async (req, res) => {
   try {
     const { _id } = req.userData;
-    const { imageUrl } = req.body
+    const { imageUrl } = req.body;
     if (!imageUrl) {
       return res.status(400).send({
         status: false,
@@ -540,13 +540,12 @@ exports.updateImageController = async (req, res) => {
       data: user,
     });
   } catch (error) {
-   
     res.status(500).send({
       status: false,
       message: error.message,
     });
   }
-}
+};
 exports.instructorInfoController = async (req, res) => {
   try {
     const { id } = req.params;
@@ -574,7 +573,7 @@ exports.instructorInfoController = async (req, res) => {
       message: error.message,
     });
   }
-}
+};
 
 exports.getLeaderboardController = async (req, res) => {
   try {
@@ -589,12 +588,18 @@ exports.getLeaderboardController = async (req, res) => {
     }
 
     // Calculate total score for each user
-    const leaderboard = users.map(user => {
+    const leaderboard = users.map((user) => {
       // Calculate total quiz score
-      const quizScore = user.quizs.reduce((total, quiz) => total + quiz.score, 0);
+      const quizScore = user.quizs.reduce(
+        (total, quiz) => total + quiz.score,
+        0
+      );
 
       // Calculate total assignment score
-      const assignmentScore = user.assignment.reduce((total, mark) => Number(total) + Number(mark), 0);
+      const assignmentScore = user.assignment.reduce(
+        (total, mark) => Number(total) + Number(mark),
+        0
+      );
 
       // Calculate total score (sum of quiz score and assignment score)
       const totalScore = quizScore + assignmentScore;
@@ -605,16 +610,18 @@ exports.getLeaderboardController = async (req, res) => {
 
     // Sort users based on total score in descending order
     // Filter out users with null totalScore
-const filteredLeaderboard = leaderboard.filter(entry => entry.totalScore !== null);
+    const filteredLeaderboard = leaderboard.filter(
+      (entry) => entry.totalScore !== null
+    );
 
-filteredLeaderboard.sort((a, b) => b.totalScore - a.totalScore);
+    filteredLeaderboard.sort((a, b) => b.totalScore - a.totalScore);
 
-// Prepare response
-const responseData = filteredLeaderboard.map(entry => ({
-  name: entry.user.name,
-  totalScore: entry.totalScore,
-  image: entry.user.ProfileImage || '' // Assuming ProfileImage is the property holding the user's image
-}));
+    // Prepare response
+    const responseData = filteredLeaderboard.map((entry) => ({
+      name: entry.user.name,
+      totalScore: entry.totalScore,
+      image: entry.user.ProfileImage || "", // Assuming ProfileImage is the property holding the user's image
+    }));
 
     res.status(200).json({
       status: true,
@@ -661,4 +668,4 @@ exports.getUserIdController = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
