@@ -12,7 +12,7 @@ const {
   updateImageController,
   instructorInfoController,
   getLeaderboardController,
-  getUserIdController
+  getUserIdController,
 } = require("../Controllers/userController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
 const { authorization } = require("../Middlewares/IsAdmin");
@@ -20,7 +20,12 @@ const VerifyToken = require("../Middlewares/VerifyToken");
 const { VerifyTokenServices } = require("../Services/userServices");
 const router = require("express").Router();
 
-router.get("/getallusers",VerifyToken,authorization("admin","student"),userGetAllUser );
+router.get(
+  "/getallusers",
+  VerifyToken,
+  authorization("admin", "student", "super-admin"),
+  userGetAllUser
+);
 /**
  * @postAPI to register user in the application
  * @steps 1- send the request to the server
@@ -52,7 +57,7 @@ router.put(
   "/update/:id",
   apiLimiter,
   VerifyToken,
-  authorization("admin"),
+  authorization("admin", "super-admin"),
   updateUserController
 );
 /**
@@ -80,7 +85,7 @@ router.put(
   "/update-quiz-score/:id",
   apiLimiter,
   VerifyToken,
-  authorization("admin", "teacher", "student"),
+  authorization("admin", "super-admin", "student"),
   useUpdateQuizScoreController
 );
 /**
@@ -104,11 +109,16 @@ router.put(
 router.put(
   "/profile/progress",
   VerifyToken,
-  authorization("admin", "student"),
+  authorization("admin", "student", "super-admin"),
   useUpdateUserProfileProgressController
 );
 router.put("/updateImgurl", VerifyToken, updateImageController);
-router.get("/instructorInfo/:id",instructorInfoController)
-router.get("/leaderboard",VerifyToken,authorization("admin", "student"),getLeaderboardController);
-router.get("/:userId",getUserIdController)
+router.get("/instructorInfo/:id", instructorInfoController);
+router.get(
+  "/leaderboard",
+  VerifyToken,
+  authorization("admin", "student", "super-admin"),
+  getLeaderboardController
+);
+router.get("/:userId", getUserIdController);
 module.exports = router;

@@ -8,8 +8,7 @@ const {
   notificationController,
   getAssignmentWithIdController,
   getAllAssignmentsController,
-  updateAssignmentMarkController
-
+  updateAssignmentMarkController,
 } = require("../Controllers/courseController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
 const { authorization } = require("../Middlewares/IsAdmin");
@@ -26,7 +25,7 @@ router.post(
   "/create",
   apiLimiter,
   VerifyToken,
-  authorization("admin"),
+  authorization("admin", "super-admin"),
   createCourseController
 );
 /**
@@ -47,43 +46,44 @@ router.put(
   "/updateCourse/:id",
   apiLimiter,
   VerifyToken,
-  authorization("admin"),
+  authorization("admin", "super-admin"),
   updateCourseController
 );
 router.post(
   "/getQuiz/:id",
   VerifyToken,
-  authorization("admin", "teacher", "student"),
+  authorization("admin", "super-admin", "student"),
   getQuizController
 );
-router.get(
-  "/getNotification",
-  VerifyToken,
-  getNotificationController
-)
+router.get("/getNotification", VerifyToken, getNotificationController);
 router.post(
   "/assignment",
   VerifyToken,
-  authorization("admin","student"),
+  authorization("admin", "student", "super-admin"),
   updateAssignmentController
-)
+);
 router.get(
   "/getAssignments",
   VerifyToken,
-  authorization("admin","student"),
-  getAssignmentWithIdController,
-)
+  authorization("admin", "student", "super-admin"),
+  getAssignmentWithIdController
+);
 router.get(
   "/AllAssignments",
   VerifyToken,
-  authorization("admin"),
-  getAllAssignmentsController,
-)
+  authorization("admin", "super-admin"),
+  getAllAssignmentsController
+);
 router.put(
   "/updateAssignmentMark/:id",
   VerifyToken,
-  authorization("admin"),
+  authorization("admin", "super-admin"),
   updateAssignmentMarkController
-  )
-router.post("/newNotification",VerifyToken,authorization("admin"),notificationController)
+);
+router.post(
+  "/newNotification",
+  VerifyToken,
+  authorization("admin", "super-admin"),
+  notificationController
+);
 module.exports = router;

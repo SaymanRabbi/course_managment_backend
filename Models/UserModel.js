@@ -23,9 +23,9 @@ const User = new mongoose.Schema(
       trim: true,
       maxlength: [11, "Your phone number cannot exceed 10 characters"],
     },
-    ProfileImage:{
+    ProfileImage: {
       type: String,
-      default: ""
+      default: "",
     },
     ExpartIn: {
       type: String,
@@ -60,11 +60,11 @@ const User = new mongoose.Schema(
       },
     ],
     assignment: [],
-    courseProgress:[
+    courseProgress: [
       {
         courseId: { type: String },
-        title: { type: String }
-      }
+        title: { type: String },
+      },
     ],
     seeTotalVideo: {
       type: Number,
@@ -76,7 +76,7 @@ const User = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["student", "teacher", "admin"],
+      enum: ["student", "super-admin", "admin"],
       default: "student",
     },
     activeDevice: [
