@@ -1,4 +1,4 @@
-const Chat = require("../models/ChatModel");
+const Chat = require("../Models/ChatModel");
 
 exports.createChat = async (req, res) => {
   // already exits reciver
