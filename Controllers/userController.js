@@ -10,6 +10,7 @@ const ChangesPass = require("../Models/ChangesPass");
 const {
   sendVerificationEmail,
   sendForgotPasswordEmail,
+  sendMail,
 } = require("../utils/sendMail");
 const UserModel = require("../Models/UserModel");
 const CourseModel = require("../Models/CourseModel");
@@ -194,21 +195,22 @@ exports.updateUserController = async (req, res) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
-
+    const { _id } = req.userData;
     if (!id) {
       return res.status(400).send({
         status: false,
         message: "Please provide all the fields",
       });
     }
-    const user = await updateUserServices(id, role);
+    const user = await updateUserServices(id, role, _id);
 
     if (!user) {
       return res.status(404).send({
         status: false,
-        message: "User not found or role already updated",
+        message: "User not found or you are not authorized to update the role",
       });
     }
+    await sendMail(user);
     res.status(200).send({
       status: true,
       message: "User role updated successfully",

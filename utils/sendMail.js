@@ -15,7 +15,7 @@ const sendMail = async (user) => {
   const mailOptions = {
     from: process.env.MAIL,
     to: user.email,
-    subject: ` Congratulations ${user.name}! Your role has been updated to Admin`,
+    subject: ` Congratulations ${user.name}! Your role has been updated to ${user.role}`,
     html,
   };
   try {
@@ -87,7 +87,7 @@ const sendForgotPasswordEmail = async (user, code) => {
     throw new Error(error.message);
   }
 };
-const sendAssignmentMark = async (user, assignment,note) => {
+const sendAssignmentMark = async (user, assignment, note) => {
   const transporter = nodeMailer.createTransport({
     service: "gmail",
     port: 465,
@@ -192,11 +192,11 @@ const sendAssignmentMark = async (user, assignment,note) => {
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 module.exports = {
   sendMail,
   sendVerificationEmail,
   sendForgotPasswordEmail,
-  sendAssignmentMark
+  sendAssignmentMark,
 };

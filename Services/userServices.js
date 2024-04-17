@@ -25,18 +25,22 @@ exports.userLoginServices = async (email) => {
 };
 // -----get userLoginServices------
 // -----update user role------
-exports.updateUserServices = async (id, role) => {
+exports.updateUserServices = async (id, role, _id) => {
   try {
     const oldUser = await UserModel.findById(id);
+    const isAdminORSuperAdmin = await UserModel.findById(_id);
+    if (role === "admin" && isAdminORSuperAdmin.role !== "super-admin") {
+      return null;
+    }
     const updateUser = await UserModel.findByIdAndUpdate(
       id,
       { role },
       { new: true, useFindAndModify: false }
     );
+
     if (updateUser) {
       // Check if the role was actually updated
       if (oldUser.role !== updateUser.role) {
-        await sendMail(updateUser);
         return updateUser;
       } else {
         return null;
