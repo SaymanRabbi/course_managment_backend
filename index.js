@@ -27,7 +27,7 @@ DBConnection();
 // ------------------ Middlewares ------------------//
 const io = require("socket.io")(8800, {
   cors: {
-    origin: "*",
+    origin: "https://course-managment-backend.onrender.com",
   },
 });
 
