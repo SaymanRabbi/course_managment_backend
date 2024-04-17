@@ -25,7 +25,7 @@ const messageRoute = require("./Routes/MessagesRoute");
 DBConnection();
 // ------------------ Connect to Database ------------------//
 // ------------------ Middlewares ------------------//
-const io = require("socket.io")(5000, {
+const io = require("socket.io")(8800, {
   cors: {
     origin: "*",
   },
