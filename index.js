@@ -25,10 +25,11 @@ const messageRoute = require("./Routes/MessagesRoute");
 DBConnection();
 // ------------------ Connect to Database ------------------//
 // ------------------ Middlewares ------------------//
-const io = require("socket.io")(8800, {
+const io = require("socket.io")(5000, {
   cors: {
-    origin: "https://course-managment-backend.onrender.com",
+    origin: "*",
   },
+  transports: ["websocket", "polling"],
 });
 
 let activeUsers = [];
