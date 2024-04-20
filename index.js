@@ -1,4 +1,5 @@
 const express = require("express");
+const { Server } = require("socket.io");
 const app = express();
 const cors = require("cors");
 const colors = require("colors");
@@ -27,9 +28,9 @@ DBConnection();
 // ------------------ Middlewares ------------------//
 const io = require("socket.io")(8800, {
   cors: {
-    origin: "*",
+    origin: "https://course-managment-backend.onrender.com",
+    credentials: true,
   },
-  transports: ["websocket", "polling"],
 });
 
 let activeUsers = [];
@@ -57,6 +58,7 @@ io.on("connection", (socket) => {
       io.to(user.socketId).emit("recieve-message", data);
     }
   });
+
   socket.on("disconnect", () => {
     // remove user from active users
     activeUsers = activeUsers.filter((user) => user.socketId !== socket.id);
