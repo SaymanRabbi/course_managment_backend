@@ -671,3 +671,31 @@ exports.getUserIdController = async (req, res) => {
     });
   }
 };
+exports.removeUserController = async (req, res) => {
+  try {
+    const { id } = req?.params;
+    if (!id) {
+      return res.status(400).json({
+        status: false,
+        message: "Please provide a user ID",
+      });
+    }
+    const findAndRemove = await UserModel.deleteOne({ _id: id });
+    if (!findAndRemove) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      status: true,
+      message: "User removed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
