@@ -41,7 +41,7 @@ const sendVerificationEmail = async (user, token) => {
     <p style="color: green; font-size: 18px; font-weight: bold;">
     Thank You for being a part of Course Management! 🎉
 </p>
-    <p style="text-align:center;font-size:20px;font-weight:700;color:#484848">Verify Email Adress</p><span style="text-align:center;font-size:14px;color:#484848">Please click the button below to verify your email address.</span><a href="${process.env.CLIENT_URL}/verify-email/${token}" style="display:block;padding:10px 20px;background-color:#ff1966;color:#fff;border-radius:5px;text-decoration:none;margin-top:20px;margin-bottom:20px">Verify Email</a></div></body></html>
+    <p style="text-align:center;font-size:20px;font-weight:700;color:#484848">Verify Email Adress</p><span style="text-align:center;font-size:14px;color:#484848">Please click the button below to verify your email address.</span><a href="https://starlit-zuccutto-9d1e7d.netlify.app/verify-email/${token}" style="display:block;padding:10px 20px;background-color:#ff1966;color:#fff;border-radius:5px;text-decoration:none;margin-top:20px;margin-bottom:20px">Verify Email</a></div></body></html>
         `;
   const mailOptions = {
     from: process.env.MAIL,
