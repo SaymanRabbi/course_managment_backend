@@ -9,6 +9,7 @@ const {
   getAssignmentWithIdController,
   getAllAssignmentsController,
   updateAssignmentMarkController,
+  addReviewController,
 } = require("../Controllers/courseController");
 const { apiLimiter } = require("../Middlewares/ApiLimiter");
 const { authorization } = require("../Middlewares/IsAdmin");
@@ -49,6 +50,14 @@ router.put(
   authorization("admin", "super-admin"),
   updateCourseController
 );
+// add rivew to course
+router.put(
+  "/addReview/:id",
+  VerifyToken,
+  authorization("admin", "super-admin", "student"),
+  addReviewController
+);
+// add rivew to course
 router.post(
   "/getQuiz/:id",
   VerifyToken,

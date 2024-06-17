@@ -45,6 +45,16 @@ const CourseSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Please enter your price"],
     },
+    reviews: [
+      {
+        rating: { type: Number, required: true },
+        comment: { type: String, required: true },
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      },
+    ],
     image: {
       type: String,
       required: [true, "Please enter your image"],
