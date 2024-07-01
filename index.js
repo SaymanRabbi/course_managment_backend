@@ -6,7 +6,13 @@ const colors = require("colors");
 const http = require("http");
 const server = http.createServer(app);
 const { ErrorHandaler } = require("./Middlewares/ErrorHandaler");
-
+const port = process.env.PORT || 8800;
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 app.use(express.json());
 const dotenv = require("dotenv").config();
 const { DBConnection } = require("./utils/dataBase");
@@ -21,19 +27,13 @@ const messageRoute = require("./Routes/MessagesRoute");
 DBConnection();
 // ------------------ Connect to Database ------------------//
 // ------------------ Middlewares ------------------//
-const io = socketIo(5000, {
+const io = socketIo(server, {
   cors: {
     origin: "https://starlit-zuccutto-9d1e7d.netlify.app",
     methods: ["GET", "POST"],
   },
 });
-const port = process.env.PORT || 5000;
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
+
 let activeUsers = [];
 
 io.on("connection", (socket) => {
