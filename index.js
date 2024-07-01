@@ -28,7 +28,7 @@ DBConnection();
 // ------------------ Middlewares ------------------//
 const io = require("socket.io")(8800, {
   cors: {
-    origin: "*",
+    origin: "https://starlit-zuccutto-9d1e7d.netlify.app",
   },
 });
 

@@ -19,7 +19,7 @@ const router = require("express").Router();
 /**
  * @postAPI to create course in the application
  * @steps 1- send the request to the server
- * @example   http://localhost:5000/api/v1/course/create
+ * @example   https://course-managment-backend.onrender.com/api/v1/course/create
  * @rule 1- the request must be post request with the body of the request contain the following
  */
 router.post(
@@ -32,7 +32,7 @@ router.post(
 /**
  * @getAPI to get course in the application
  * @steps 1- send the request to the server
- * @example   http://localhost:5000/api/v1/course/getCourse
+ * @example   https://course-managment-backend.onrender.com/api/v1/course/getCourse
  * @rule 1- the request must be get request with the body of the request contain the following userid and courseid
  */
 router.get("/getCourse", getCourseController);
@@ -40,7 +40,7 @@ router.get("/getCourse", getCourseController);
 /**
  * @patchAPI to update course in the application
  * @steps 1- send the request to the server
- * @example   http://localhost:5000/api/v1/course/updateCourse
+ * @example   https://course-managment-backend.onrender.com/api/v1/course/updateCourse
  * @rule 1- the request must be patch request with the body of the request contain the following userid and courseid
  */
 router.put(
