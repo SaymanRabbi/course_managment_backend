@@ -6,13 +6,6 @@ const colors = require("colors");
 const http = require("http");
 const server = http.createServer(app);
 const { ErrorHandaler } = require("./Middlewares/ErrorHandaler");
-const port = process.env.PORT || 5000;
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
 
 app.use(express.json());
 const dotenv = require("dotenv").config();
@@ -28,45 +21,52 @@ const messageRoute = require("./Routes/MessagesRoute");
 DBConnection();
 // ------------------ Connect to Database ------------------//
 // ------------------ Middlewares ------------------//
-const io = socketIo(server, {
+const io = socketIo(5000, {
   cors: {
     origin: "https://starlit-zuccutto-9d1e7d.netlify.app",
     methods: ["GET", "POST"],
   },
 });
-
+const port = process.env.PORT || 5000;
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 let activeUsers = [];
 
 io.on("connection", (socket) => {
-  // add new User
+  console.log("a user connected:", socket.id);
+
+  // add new user
   socket.on("new-user-add", (newUserId) => {
-    // if user is not added previously
     if (!activeUsers.some((user) => user.userId === newUserId)) {
       activeUsers.push({ userId: newUserId, socketId: socket.id });
+      console.log("New user added:", newUserId);
     }
-    // send all active users to new user
     io.emit("get-users", activeUsers);
   });
 
   // send message to a specific user
   socket.on("send-message", (data) => {
-    const { reciverId } = data;
+    const { receiverId } = data;
 
     const user = activeUsers.find((user) => {
-      return user.userId === reciverId;
+      return user.userId === receiverId;
     });
 
     if (user) {
-      io.to(user.socketId).emit("recieve-message", data);
+      io.to(user.socketId).emit("receive-message", data);
+      console.log("Message sent to:", receiverId);
     }
   });
 
+  // handle disconnection
   socket.on("disconnect", () => {
-    // remove user from active users
     activeUsers = activeUsers.filter((user) => user.socketId !== socket.id);
-
-    // send all active users to all users
     io.emit("get-users", activeUsers);
+    console.log("User disconnected:", socket.id);
   });
 });
 // ------------------ Middlewares ------------------//
