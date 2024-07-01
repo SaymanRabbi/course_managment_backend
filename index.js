@@ -3,6 +3,8 @@ const { Server } = require("socket.io");
 const app = express();
 const cors = require("cors");
 const colors = require("colors");
+const http = require("http");
+const server = http.createServer(app);
 const { ErrorHandaler } = require("./Middlewares/ErrorHandaler");
 const port = process.env.PORT || 5000;
 app.use(
@@ -26,9 +28,10 @@ const messageRoute = require("./Routes/MessagesRoute");
 DBConnection();
 // ------------------ Connect to Database ------------------//
 // ------------------ Middlewares ------------------//
-const io = require("socket.io")(8800, {
+const io = socketIo(server, {
   cors: {
     origin: "https://starlit-zuccutto-9d1e7d.netlify.app",
+    methods: ["GET", "POST"],
   },
 });
 
